@@ -1,0 +1,95 @@
+body, html {
+  height: 100%;
+  font-family: "Avenir", "Corbel", sans-serif;
+}
+
+.tooltip {
+  font-size: 0.65rem;
+  /*  --bs-tooltip-font-size werkt niet? */
+}
+
+:root {
+  --bs-primary-rgb: 72, 126, 168;
+  --bs-secondary-rgb: 9,0,0;
+  --bs-tertiary-rgb: 255, 255, 255;
+  --bs-body-color: var(--bs-white);
+  --bs-link-color-rgb: var(--bs-white);
+  --bs-link-hover-color-rgb: var(--bs-white);
+  --bs-border-radius: 1rem;
+  --bs-gradient: linear-gradient(0deg, rgba(255, 255, 255, 0.18), rgba(var(--bs-white-rgb), 0));
+  --bs-box-shadow: 0.5rem 0.5rem 1rem rgba(var(--bs-secondary-rgb), 0.40);
+  --bs-emphasis-color: rgb(var(--bs-primary-rgb));
+  --bs-tooltip-font-size: 0.65rem;
+}
+p a:not(.btn) {
+  text-decoration: none;
+  border-bottom: solid 1px rgba(var(--bs-primary-rgb), .6);
+}
+p a:not(.btn):hover {
+  border-bottom: solid 1px rgba(var(--bs-primary-rgb));
+}
+h1 {
+  letter-spacing: 0.1rem;
+}
+.fs-1 {
+  font-size: 4rem!important; 
+  letter-spacing: 0.3rem;
+}
+
+header > img {
+  max-width: 180px;
+}
+a, .bg-primary, .bg-secondary, .text-primary, .text-secondary, .border-primary {
+  transition: all 0.3s ease-in-out !important;
+}
+
+ul.social-icons a {
+  width: 48px;
+  margin: 0 6px;;
+  height: 48px;
+  display: block;
+  color: rgb(var(--bs-secondary-rgb));
+  background-color: rgb(var(--bs-primary-rgb));
+  border: solid 1px var(--bs-white);
+}
+ul.social-icons a i {
+  font-size: 130%;
+}
+
+ul.social-icons a:hover {
+  background-color: var(--bs-white);
+  color: rgb(var(--bs-secondary-rgb));
+}
+
+div.top-0 > div, #colorPairs > div {
+  cursor: pointer;
+}
+#colorPairs > div:hover div {
+  border-color: var(--bs-white) !important;
+}
+
+.btn-primary {
+  --bs-btn-bg: rgb(var(--bs-primary-rgb));
+
+  --bs-btn-color: rgb(var(--bs-secondary-rgb));
+  --bs-btn-border-color: var(--bs-white);
+
+  --bs-btn-hover-bg: var(--bs-white);
+  --bs-btn-hover-color: rgb(var(--bs-secondary-rgb));
+  --bs-btn-hover-border-color: var(--bs-white);
+
+  --bs-btn-active-bg: rgb(var(--bs-primary-rgb));
+  --bs-btn-active-border-color: rgb(var(--bs-primary-rgb));
+  --bs-btn-focus-border-color: rgb(var(--bs-primary-rgb));
+}
+
+@media (min-width: 768px) { 
+  .d-md-block.d-flex, .d-lg-block.d-flex, .d-xl-block.d-flex, .d-xxl-block.d-flex {
+    display: flex !important;
+  }
+}
+
+.w-90 {
+  width: 90%!important;
+}
+

@@ -1,0 +1,105 @@
+# Make sure to copy HTML files to the NFS server at /mnt/HC_Volume_102649492/k8s-share/lindeman-it/
+# PersistentVolume
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: lindeman-it
+  namespace: www
+spec:
+  capacity:
+    storage: 10Mi
+  accessModes:
+    - ReadOnlyMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    path: /mnt/HC_Volume_102649492/k8s-share/www.lindeman.it/www
+    server: 10.0.1.1
+---
+# PersistentVolumeClaim
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: lindeman-it
+  namespace: www
+spec:
+  accessModes:
+    - ReadOnlyMany
+  resources:
+    requests:
+      storage: 10Mi
+  volumeName: lindeman-it
+---
+# Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lindeman-it
+  namespace: www
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lindeman-it
+  template:
+    metadata:
+      labels:
+        app: lindeman-it
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest  # use official nginx to serve local files
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: html-volume
+          mountPath: /usr/share/nginx/html
+      volumes:
+      - name: html-volume
+        persistentVolumeClaim:
+          claimName: lindeman-it
+---
+# Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: lindeman-it
+  namespace: www
+spec:
+  selector:
+    app: lindeman-it
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+---
+# Ingress
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: lindeman-it
+  namespace: www
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: lindeman.it
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: lindeman-it
+            port:
+              number: 80
+  - host: "*.lindeman.it"
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: lindeman-it
+            port:
+              number: 80
