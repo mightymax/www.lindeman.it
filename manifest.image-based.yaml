@@ -17,7 +17,7 @@ spec:
       - name: ghcr-creds
       containers:
       - name: nginx
-        image: ghcr.io/mightymax/www.lindeman.it:INITIAL
+        image: ghcr.io/mightymax/www.lindeman.it:26c82ebf93ec44a516f4dbf3e5371b5a7eb47828
         ports:
         - containerPort: 80
 ---
