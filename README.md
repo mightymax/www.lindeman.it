@@ -1,73 +1,28 @@
-This is no longer used, we use the NFS mount.
+# www.lindeman.it
+
+Deze deployment is bedoeld voor een image-based setup:
+
+- de statische bestanden staan in `deployments/www.lindeman.it/www/`
+- GitHub Actions bouwt daar een image van
+- Argo CD deployed vervolgens de nieuwe image-tag
+
+De oude NFS-workflow met handmatig `scp` of `rsync` naar een nodepad is hiervoor niet meer het gewenste model.
+
+## GHCR pull secret
+
+Als de GHCR package private is, maak dan in namespace `www` een pull secret aan:
 
 ```bash
-export GHT=<GIT-PERSONAL-TOKEN> 
-echo $GHT | docker login ghcr.io -u mightymax --password-stdin
-docker build -t ghcr.io/mightymax/load-balancer-html:latest .
-docker push ghcr.io/mightymax/load-balancer-html:latest
-kubectl create namespace loadbalancer
+./tools/create-secret-ghcr www
+```
+
+Of handmatig:
+
+```bash
 kubectl create secret docker-registry ghcr-creds \
   --docker-server=ghcr.io \
   --docker-username=mightymax \
-  --docker-password=$GHT \
+  --docker-password=$GITHUB_TOKEN \
   --docker-email=mark@lindeman.nu \
-  --namespace=loadbalancer
-
-```
-
-New Image?
-```bash
-kubectl rollout restart deployment ldmax-loadbalancer-html -n loadbalancer
-```
-
-## TLS
-```bash
-microk8s enable cert-manager
-microk8s kubectl apply -f - <<EOF
----
-apiVersion: cert-manager.io/v1
-kind: ClusterIssuer
-metadata:
- name: lets-encrypt
-spec:
- acme:
-   email: mark@Lindeman.it
-   server: https://acme-v02.api.letsencrypt.org/directory
-   privateKeySecretRef:
-     # Secret resource that will be used to store the account's private key.
-     name: lets-encrypt-priviate-key
-   # Add a single challenge solver, HTTP01 using nginx
-   solvers:
-   - http01:
-       ingress:
-         class: public
-EOF
-microk8s kubectl get clusterissuer -o wide
-microk8s kubectl create deploy -n axiell --image cdkbot/microbot:1 --replicas 3 microbot
-microk8s kubectl expose deploy -n axiell microbot --port 80 --type ClusterIP
-microk8s kubectl apply -f - <<EOF
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
- name: microbot-ingress
- namespace: axiell
- annotations:
-   cert-manager.io/cluster-issuer: lets-encrypt
-spec:
- tls:
- - hosts:
-   - data.axiell.com
-   secretName: microbot-ingress-tls
- rules:
- - host: data.axiell.com
-   http:
-     paths:
-     - backend:
-         service:
-           name: microbot
-           port:
-             number: 80
-       path: /
-       pathType: Exact
-EOF
+  --namespace=www
 ```
