@@ -1,35 +1,3 @@
-# Make sure to copy HTML files to the NFS server at /mnt/HC_Volume_102649492/k8s-share/lindeman-it/
-# PersistentVolume
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: lindeman-it
-  namespace: www
-spec:
-  capacity:
-    storage: 10Mi
-  accessModes:
-    - ReadOnlyMany
-  persistentVolumeReclaimPolicy: Retain
-  nfs:
-    path: /mnt/HC_Volume_102649492/k8s-share/www.lindeman.it/www
-    server: 10.0.1.1
----
-# PersistentVolumeClaim
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: lindeman-it
-  namespace: www
-spec:
-  accessModes:
-    - ReadOnlyMany
-  resources:
-    requests:
-      storage: 10Mi
-  volumeName: lindeman-it
----
-# Deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -45,20 +13,14 @@ spec:
       labels:
         app: lindeman-it
     spec:
+      imagePullSecrets:
+      - name: ghcr-creds
       containers:
       - name: nginx
-        image: nginx:latest  # use official nginx to serve local files
+        image: ghcr.io/mightymax/www.lindeman.it:9883286b0497dfe2df85ef6630fc4d85472401f5
         ports:
         - containerPort: 80
-        volumeMounts:
-        - name: html-volume
-          mountPath: /usr/share/nginx/html
-      volumes:
-      - name: html-volume
-        persistentVolumeClaim:
-          claimName: lindeman-it
 ---
-# Service
 apiVersion: v1
 kind: Service
 metadata:
@@ -72,7 +34,6 @@ spec:
     port: 80
     targetPort: 80
 ---
-# Ingress
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
