@@ -54,27 +54,7 @@ spec:
             name: lindeman-it
             port:
               number: 80
-  - host: "*.lindeman.it"
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: lindeman-it
-            port:
-              number: 80
   - host: lindeman.nu
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: lindeman-it
-            port:
-              number: 80
-  - host: "*.lindeman.nu"
     http:
       paths:
       - path: /

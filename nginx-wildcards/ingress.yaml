@@ -1,0 +1,32 @@
+# NGINX-only rollback route. Traefik's compatibility provider selects legacy
+# annotation "nginx", whereas the standby NGINX controller selects "public".
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: lindeman-it-wildcards-nginx
+  namespace: www
+  annotations:
+    kubernetes.io/ingress.class: public
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+    - host: "*.lindeman.it"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: lindeman-it
+                port:
+                  number: 80
+    - host: "*.lindeman.nu"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: lindeman-it
+                port:
+                  number: 80
