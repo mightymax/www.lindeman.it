@@ -7,4 +7,5 @@ resources:
 
 images:
   - name: ghcr.io/mightymax/www-lindeman-it-app
-    newTag: latest
+    newTag: v0.0.2
+    digest: sha256:20c7f0771f9dcd6421ec7ecce531be9e57b1b5d228fe7d48dad845ab7fb4a772
