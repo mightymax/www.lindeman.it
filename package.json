@@ -1,0 +1,10 @@
+{
+  "name": "www.lindeman.it",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "preversion": "node scripts/preversion-check.js",
+    "postversion": "git push origin main --follow-tags"
+  }
+}

@@ -1,28 +1,24 @@
 # www.lindeman.it
 
-Deze deployment is bedoeld voor een image-based setup:
+Statische website; bron en deployment in deze repo. Lokaal: `~/Code/cluster/www.lindeman.it`.
 
-- de statische bestanden staan in `deployments/www.lindeman.it/www/`
-- GitHub Actions bouwt daar een image van
-- Argo CD deployed vervolgens de nieuwe image-tag
+## Release
 
-De oude NFS-workflow met handmatig `scp` of `rsync` naar een nodepad is hiervoor niet meer het gewenste model.
+Commit en push wijzigingen naar `main`, daarna:
 
-## GHCR pull secret
-
-Als de GHCR package private is, maak dan in namespace `www` een pull secret aan:
-
-```bash
-./tools/create-secret-ghcr www
+```sh
+npm version patch # of minor / major
 ```
 
-Of handmatig:
+Dit maakt en pusht de versiecommit en tag. GitHub Actions bouwt uitsluitend
+linux/arm64, publiceert `ghcr.io/mightymax/www-lindeman-it-app`, test HTTP en CSS,
+en werkt de image-tag en digest bij op branch `release`. Argo CD Application
+`www.lindeman.it` volgt `infrastructure/overlays/prod` op die branch.
 
-```bash
-kubectl create secret docker-registry ghcr-creds \
-  --docker-server=ghcr.io \
-  --docker-username=mightymax \
-  --docker-password=$GITHUB_TOKEN \
-  --docker-email=mark@lindeman.nu \
-  --namespace=www
-```
+Dockerbasis: NGINX 1.30.6 / Alpine 3.24, gepind op digest.
+Bestaande ingressroutes en namespace `www` blijven behouden. De wildcard-ingress
+is bewust uitsluitend voor de standby NGINX-controller en heeft geen healthcheck.
+Het bestaande `ghcr-creds` pull secret blijft buiten deze repo.
+
+Controle: `gh run list --workflow release.yml` en
+`kubectl -n argocd get application www.lindeman.it`.

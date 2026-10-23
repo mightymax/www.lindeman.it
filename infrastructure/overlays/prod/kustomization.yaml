@@ -4,3 +4,7 @@ kind: Kustomization
 resources:
   - manifest.yaml
   - nginx-wildcards
+
+images:
+  - name: ghcr.io/mightymax/www-lindeman-it-app
+    newTag: latest
